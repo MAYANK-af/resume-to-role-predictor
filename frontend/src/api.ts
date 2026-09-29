@@ -1,6 +1,9 @@
 import type { PredictResponse, MetadataResponse } from './types';
-// Read from environment variable VITE_API_URL with http://localhost:8000 as default
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
+// Read from environment variable VITE_API_URL; default to current origin in production or http://localhost:8000 in dev
+const defaultApi = typeof window !== 'undefined' && window.location.port !== '3000' && window.location.origin.startsWith('http')
+  ? window.location.origin
+  : 'http://localhost:8000';
+const API_BASE = (import.meta.env.VITE_API_URL || defaultApi).replace(/\/+$/, '');
 
 export async function checkApiHealth(): Promise<boolean> {
   try {

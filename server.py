@@ -4,6 +4,7 @@ FastAPI backend wrapper for Resume-to-Role Predictor.
 Keeps existing model code untouched. Exposes POST /predict and metadata endpoints.
 """
 
+import os
 from typing import Optional, List, Dict
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -174,6 +175,14 @@ def predict_resume(request: PredictRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Mount compiled 3D React frontend if built
+dist_dir = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+if os.path.exists(dist_dir):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=dist_dir, html=True), name="frontend")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server:app", host="127.0.0.1", port=8000, reload=False)
+
