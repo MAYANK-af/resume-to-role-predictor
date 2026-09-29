@@ -1,6 +1,16 @@
 # ⚡ Resume-to-Role Predictor
 
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black?logo=three.js)](https://threejs.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 An end-to-end Natural Language Processing (NLP) system that parses candidate resumes, predicts the best-fit technical role, calculates a continuous **0–100 target role fit score**, and provides mathematical, keyword-level explainability for every recommendation.
+
+- 🔗 **GitHub Repository**: [https://github.com/MAYANK-af/resume-to-role-predictor](https://github.com/MAYANK-af/resume-to-role-predictor)
+- 🌐 **Live Demo (Streamlit Cloud)**: [https://resume-to-role-predictor.streamlit.app](https://resume-to-role-predictor.streamlit.app) *(1-click deploy guide below)*
+- 📄 **Full Technical Architecture**: [`PROJECT_EXPLAINED.md`](PROJECT_EXPLAINED.md)
 
 Features a modern **dual frontend**:
 1. **Interactive 3D Web Experience ("Word Constellation")**: High-performance React 19 + Three.js / React Three Fiber / GSAP frontend communicating with a FastAPI REST backend.
@@ -100,7 +110,7 @@ flowchart LR
 ### 1. Environment & Dependencies Setup
 ```bash
 # Clone repository
-git clone https://github.com/USERNAME/resume-to-role-predictor.git
+git clone https://github.com/MAYANK-af/resume-to-role-predictor.git
 cd resume-to-role-predictor
 
 # Create and activate Python virtual environment
@@ -149,6 +159,14 @@ Open **`http://localhost:8501`** in your browser.
 ```bash
 python -m src.train
 ```
+
+### 5. Deploying a Free 24/7 Live Web Link (Streamlit Cloud)
+To get an instant, free public link for portfolio and viva evaluators:
+1. Push this repository to GitHub (`MAYANK-af/resume-to-role-predictor`).
+2. Go to [share.streamlit.io](https://share.streamlit.io/) and sign in with GitHub.
+3. Click **"New app"**, select `MAYANK-af/resume-to-role-predictor`, branch `main`, and main file `app.py`.
+4. Click **Deploy!** Your app will be live 24/7 at a public URL (e.g. `https://resume-to-role-predictor.streamlit.app`).
+5. In your GitHub repository page, click the ⚙️ gear icon next to **"About"** (on the right sidebar), paste this URL into the **Website** field, and save.
 
 ---
 
