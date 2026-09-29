@@ -71,7 +71,7 @@ def acquire_dataset() -> pd.DataFrame:
     print(f"[DATA] '{DATA_PATH}' not found. Attempting download via kagglehub...")
     try:
         import kagglehub
-        path = kagglehub.dataset_download("gauravduttakiit/resume-dataset")
+        path = kagglehub.dataset_download("jillanisofttech/updated-resume-dataset")
         csv_candidates = [f for f in os.listdir(path) if f.endswith('.csv')]
         if csv_candidates:
             source_file = os.path.join(path, csv_candidates[0])

@@ -33,7 +33,7 @@ The pipeline classifies resumes into **5 standardized tech disciplines**:
 
 ## 📊 Dataset & Source
 
-- **Dataset Source**: [Kaggle Resume Dataset](https://www.kaggle.com/datasets/gauravduttakiit/resume-dataset) (`Category` + `Resume` columns, ~962 raw entries across 25 career domains).
+- **Dataset Source**: [Updated Resume Dataset on Kaggle](https://www.kaggle.com/datasets/jillanisofttech/updated-resume-dataset) (`Category` + `Resume` columns, ~962 raw entries across 25 career domains). A pre-bundled copy is already included in this repository at [`data/resume.csv`](data/resume.csv).
 - **Domain Pruning**: Non-tech categories (HR, Advocate, Arts, Sales, Health, Chef) were removed, keeping 12 core engineering categories.
 - **Deduplication**: The raw Kaggle corpus contains 796 near-identical scraped duplicates. We deduplicate on resume text, leaving **106 unique, high-variance tech resumes** (Train: 84, Test: 22).
 
