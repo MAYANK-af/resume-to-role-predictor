@@ -1,0 +1,261 @@
+/* =========================================================================
+   RESUME-TO-ROLE PREDICTOR — EDITORIAL TECHNICAL DESIGN SYSTEM
+   Palette: Warm Off-Black (#0c0b0a), Off-White (#ece7df), Signal Orange (#ff4d1a)
+   Type: Fraunces / Instrument Serif (Display) + JetBrains Mono (Data/Labels)
+   Zero Default Browser Styling • Bespoke Spacing & Non-Linear Easing
+   ========================================================================= */
+
+:root {
+  /* Chromatic Hierarchy */
+  --bg-color: #0c0b0a;
+  --bg-surface: #141210;
+  --bg-surface-elevated: #1a1815;
+  --bg-surface-overlay: rgba(14, 13, 12, 0.92);
+  --text-main: #ece7df;
+  --text-muted: #8a847b;
+  --text-dim: #4f4b45;
+  --accent-orange: #ff4d1a;
+  --accent-orange-dim: rgba(255, 77, 26, 0.12);
+  --accent-orange-hover: #ff6336;
+  --border-hairline: rgba(236, 231, 223, 0.11);
+  --border-strong: rgba(236, 231, 223, 0.22);
+  --border-dark: #22201d;
+
+  /* Typography Stacks */
+  --font-serif: 'Fraunces', 'Instrument Serif', Georgia, serif;
+  --font-serif-italic: 'Instrument Serif', 'Fraunces', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Proportional Type Scale */
+  --type-display: clamp(3.6rem, 5.8vw, 6.2rem);
+  --type-h1: clamp(2.4rem, 4.2vw, 3.8rem);
+  --type-h2: 1.45rem;
+  --type-lead: 13.5px;
+  --type-body: 12px;
+  --type-ui: 11px;
+  --type-caption: 9.5px;
+  --type-micro: 8.5px;
+
+  /* Typographic Leading Cadence */
+  --leading-display: 0.94;
+  --leading-title: 1.04;
+  --leading-ui: 1.4;
+  --leading-lead: 1.75;
+  --leading-mono: 1.6;
+
+  /* Typographic Tracking Rhythm */
+  --tracking-tightest: -0.045em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-ui: 0.08em;
+  --tracking-wide: 0.14em;
+  --tracking-widest: 0.22em;
+
+  /* Strict Mathematical Spatial Rhythm (4px Base Unit) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Bespoke Easing Curves (Strictly Zero Default CSS Timing) */
+  --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-expo-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-tactile: cubic-bezier(0.2, 0.95, 0.2, 1);
+  --ease-snap: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Reset all default box-sizing and margins */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: var(--type-body);
+  line-height: var(--leading-mono);
+  letter-spacing: var(--tracking-normal);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-variant-numeric: tabular-nums slashed-zero;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Custom Sleek Scrollbar (Zero Windows OS Gray Bars) */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-orange);
+}
+
+/* Subtle Film Grain SVG Overlay */
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.034;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Visible 12-Column Grid Lines (Hairline Architectural Grid) */
+.grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 1720px;
+  margin: 0 auto;
+  pointer-events: none;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-8);
+  padding: 0 var(--space-10);
+}
+
+.grid-line {
+  border-left: 1px solid rgba(236, 231, 223, 0.022);
+  height: 100%;
+}
+.grid-line:last-child {
+  border-right: 1px solid rgba(236, 231, 223, 0.022);
+}
+
+/* Typographic Utility Classes */
+.serif-display {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: var(--tracking-tightest);
+  line-height: var(--leading-display);
+}
+
+.serif-italic {
+  font-family: var(--font-serif-italic);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-caption);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  color: var(--text-muted);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mono-label.accent {
+  color: var(--accent-orange);
+}
+
+/* Bespoke Buttons (Zero Browser Defaults) */
+button {
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-main);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--type-ui);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  border-radius: 0;
+  outline: none;
+  position: relative;
+  transition: all 0.22s var(--ease-expo-out);
+}
+
+button:hover {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+}
+
+button:active {
+  transform: translateY(1px);
+  transition-duration: 0.05s;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--accent-orange);
+  outline-offset: 2px;
+}
+
+button.primary {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  color: #0c0b0a;
+  font-weight: 700;
+  letter-spacing: var(--tracking-widest);
+}
+
+button.primary:hover {
+  background: var(--accent-orange-hover);
+  border-color: var(--accent-orange-hover);
+  color: #0c0b0a;
+}
+
+/* Form inputs (Zero OS Defaults) */
+textarea, select {
+  font-family: var(--font-mono);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-main);
+  border-radius: 0;
+  outline: none;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  transition: border-color 0.22s var(--ease-expo-out);
+}
+
+textarea:focus, select:focus {
+  border-color: var(--accent-orange);
+}
+
+/* Selection Highlight */
+::selection {
+  background: var(--accent-orange);
+  color: #0c0b0a;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
