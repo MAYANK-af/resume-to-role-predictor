@@ -1,15 +1,16 @@
 # ⚡ Resume-to-Role Predictor
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev)
-[![Three.js](https://img.shields.io/badge/Three.js-R3F-black?logo=three.js)](https://threejs.org)
+[![Live Demo](https://img.shields.io/badge/Render-Live%203D%20App-46E3B7?logo=render&logoColor=white&style=for-the-badge)](https://resume-to-role-predictor.onrender.com)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black?logo=three.js&logoColor=white)](https://threejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An end-to-end Natural Language Processing (NLP) system that parses candidate resumes, predicts the best-fit technical role, calculates a continuous **0–100 target role fit score**, and provides mathematical, keyword-level explainability for every recommendation.
 
+- 🌐 **Official Live 3D Web App**: [https://resume-to-role-predictor.onrender.com](https://resume-to-role-predictor.onrender.com)
 - 🔗 **GitHub Repository**: [https://github.com/MAYANK-af/resume-to-role-predictor](https://github.com/MAYANK-af/resume-to-role-predictor)
-- 🌐 **Live Demo (Streamlit Cloud)**: [https://resume-to-role-predictor.streamlit.app](https://resume-to-role-predictor.streamlit.app) *(1-click deploy guide below)*
 - 📄 **Full Technical Architecture**: [`PROJECT_EXPLAINED.md`](PROJECT_EXPLAINED.md)
 
 Features a modern **dual frontend**:
@@ -160,13 +161,20 @@ Open **`http://localhost:8501`** in your browser.
 python -m src.train
 ```
 
-### 5. Deploying a Free 24/7 Live Web Link (Streamlit Cloud)
-To get an instant, free public link for portfolio and viva evaluators:
-1. Push this repository to GitHub (`MAYANK-af/resume-to-role-predictor`).
-2. Go to [share.streamlit.io](https://share.streamlit.io/) and sign in with GitHub.
-3. Click **"New app"**, select `MAYANK-af/resume-to-role-predictor`, branch `main`, and main file `app.py`.
-4. Click **Deploy!** Your app will be live 24/7 at a public URL (e.g. `https://resume-to-role-predictor.streamlit.app`).
-5. In your GitHub repository page, click the ⚙️ gear icon next to **"About"** (on the right sidebar), paste this URL into the **Website** field, and save.
+### 5. Live Production Deployment (Render)
+
+The application is deployed live on Render with the 3D Constellation UI and FastAPI intelligence engine running in a unified service:
+👉 **[https://resume-to-role-predictor.onrender.com](https://resume-to-role-predictor.onrender.com)**
+
+To deploy your own fork to [Render.com](https://render.com):
+1. Sign in to Render and create a **New +** -> **Web Service**.
+2. Connect your GitHub repository (`MAYANK-af/resume-to-role-predictor`).
+3. Set the build parameters:
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt && cd frontend && npm install && npm run build && cd ..`
+   - **Start Command**: `uvicorn server:app --host 0.0.0.0 --port $PORT`
+   - **Plan**: Free
+4. Click **Create Web Service**. Render serves both the 3D React frontend on `/` and the prediction API on `/predict`.
 
 ---
 

@@ -15,6 +15,9 @@ The project features a **dual frontend**:
 1. **Interactive 3D Web Experience ("Word Constellation")**: A high-performance React 19 + Three.js / React Three Fiber / Drei / GSAP application with strictly bespoke CSS Modules and mathematical typography, served via a FastAPI REST backend.
 2. **Cinematic Streamlit Dashboard**: A standalone single-process Python dashboard for instant exploratory testing.
 
+- 🌐 **Live Web Application**: [https://resume-to-role-predictor.onrender.com](https://resume-to-role-predictor.onrender.com)
+- 🔗 **GitHub Repository**: [https://github.com/MAYANK-af/resume-to-role-predictor](https://github.com/MAYANK-af/resume-to-role-predictor)
+
 ---
 
 ## 🔬 1. Complete NLP Pipeline & Exact Hyperparameters

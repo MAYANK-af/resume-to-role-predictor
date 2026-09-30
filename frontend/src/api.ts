@@ -1,8 +1,8 @@
 import type { PredictResponse, MetadataResponse } from './types';
-// Read from environment variable VITE_API_URL; default to current origin in production or http://localhost:8000 in dev
-const defaultApi = typeof window !== 'undefined' && window.location.port !== '3000' && window.location.origin.startsWith('http')
-  ? window.location.origin
-  : 'http://localhost:8000';
+// Read from environment variable VITE_API_URL; default to current origin in production or https://resume-to-role-predictor.onrender.com
+const defaultApi = typeof window !== 'undefined' && window.location.origin.startsWith('http')
+  ? (window.location.port === '3000' ? 'http://localhost:8000' : window.location.origin)
+  : 'https://resume-to-role-predictor.onrender.com';
 const API_BASE = (import.meta.env.VITE_API_URL || defaultApi).replace(/\/+$/, '');
 
 export async function checkApiHealth(): Promise<boolean> {

@@ -1,13 +1,13 @@
-# React + TypeScript + Vite
+# 🌌 3D Word Constellation — Resume-to-Role Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Interactive 3D web experience built with **React 19**, **Three.js**, **@react-three/fiber**, **@react-three/drei**, and **GSAP**.
 
-Currently, two official plugins are available:
+- 🌐 **Live Demo**: [https://resume-to-role-predictor.onrender.com](https://resume-to-role-predictor.onrender.com)
+- 🔗 **Main Repository**: [https://github.com/MAYANK-af/resume-to-role-predictor](https://github.com/MAYANK-af/resume-to-role-predictor)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🛠️ Development & Build
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
