@@ -19,6 +19,15 @@ export interface PredictResponse {
   cleaned_tokens: string[];
 }
 
+export interface UploadResponse {
+  filename: string;
+  text: string;
+  word_count: number;
+  char_count: number;
+  file_type: string;
+}
+
+
 export interface ModelComparison {
   Model: string;
   Accuracy: number;

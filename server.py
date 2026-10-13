@@ -5,8 +5,9 @@ Keeps existing model code untouched. Exposes POST /predict and metadata endpoint
 """
 
 import os
+import io
 from typing import Optional, List, Dict
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -57,6 +58,15 @@ class PredictResponse(BaseModel):
     top_words: List[WordWeight]
     target_words: List[WordWeight]
     cleaned_tokens: List[str]
+
+
+class UploadResponse(BaseModel):
+    filename: str
+    text: str
+    word_count: int
+    char_count: int
+    file_type: str
+
 
 
 # Pre-packaged editorial sample profiles
@@ -173,6 +183,102 @@ def predict_resume(request: PredictRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def extract_text_from_file(filename: str, content: bytes) -> str:
+    """
+    Extracts plain text content from uploaded files (.pdf, .docx, .txt, .md).
+    Handles encoding variations and clean text stitching.
+    """
+    ext = os.path.splitext(filename)[1].lower()
+
+    if ext == ".pdf":
+        try:
+            import pypdf
+            reader = pypdf.PdfReader(io.BytesIO(content))
+            text_parts = []
+            for page in reader.pages:
+                txt = page.extract_text()
+                if txt:
+                    text_parts.append(txt)
+            full_text = "\n\n".join(text_parts).strip()
+            if not full_text:
+                raise ValueError("No readable text found in PDF. Scanned image-only PDFs or encrypted PDFs cannot be parsed directly.")
+            return full_text
+        except ValueError:
+            raise
+        except Exception as e:
+            raise ValueError(f"Failed to read PDF document: {str(e)}")
+
+    elif ext in [".docx", ".doc"]:
+        if ext == ".docx":
+            try:
+                import docx
+                doc = docx.Document(io.BytesIO(content))
+                text_parts = [p.text for p in doc.paragraphs if p.text.strip()]
+                for table in doc.tables:
+                    for row in table.rows:
+                        for cell in row.cells:
+                            if cell.text.strip():
+                                text_parts.append(cell.text.strip())
+                full_text = "\n\n".join(text_parts).strip()
+                if not full_text:
+                    raise ValueError("Word document (.docx) contains no readable text.")
+                return full_text
+            except ValueError:
+                raise
+            except Exception as e:
+                raise ValueError(f"Failed to parse Word document: {str(e)}")
+        else:
+            raise ValueError("Legacy binary .doc format is not supported directly. Please save or export as .docx or .pdf.")
+
+    elif ext in [".txt", ".md", ".rtf", ".text"]:
+        for encoding in ["utf-8", "utf-8-sig", "latin-1", "cp1252"]:
+            try:
+                decoded = content.decode(encoding).strip()
+                if decoded:
+                    return decoded
+            except UnicodeDecodeError:
+                continue
+        raise ValueError("Could not decode text file. Ensure it is encoded in UTF-8 or standard ASCII.")
+
+    else:
+        raise ValueError(f"Unsupported file format '{ext}'. Please upload a PDF (.pdf), Word document (.docx), or plain text file (.txt).")
+
+
+@app.post("/upload-resume", response_model=UploadResponse)
+@app.post("/upload", response_model=UploadResponse)
+async def upload_resume_file(file: UploadFile = File(...)):
+    """
+    Extracts text from uploaded resume documents (.pdf, .docx, .txt, .md).
+    Returns parsed plain text and token metadata for immediate analysis.
+    """
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file was provided.")
+
+    content = await file.read()
+    if len(content) == 0:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    # Limit file size to 10MB
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size exceeds the 10MB maximum limit.")
+
+    try:
+        extracted_text = extract_text_from_file(file.filename, content)
+        words = extracted_text.split()
+        ext = os.path.splitext(file.filename)[1].lower().replace(".", "")
+        return UploadResponse(
+            filename=file.filename,
+            text=extracted_text,
+            word_count=len(words),
+            char_count=len(extracted_text),
+            file_type=ext.upper() if ext else "TEXT"
+        )
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error extracting text from file: {str(e)}")
 
 
 # Mount compiled 3D React frontend if built

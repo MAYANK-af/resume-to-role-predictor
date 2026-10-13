@@ -16,6 +16,7 @@ import {
   fetchMetadata,
   fetchSamples,
   sendPrediction,
+  uploadResumeFile,
 } from './api';
 
 export const App: React.FC = () => {
@@ -25,6 +26,17 @@ export const App: React.FC = () => {
   const [resumeText, setResumeText] = useState('');
   const [targetRole, setTargetRole] = useState<string>('');
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // File Upload State
+  const [uploadedFile, setUploadedFile] = useState<{
+    name: string;
+    size: number;
+    words: number;
+    type: string;
+  } | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Tabs: 'none' | 'how-it-works' | 'model-results' (hidden by default)
   const [activeTab, setActiveTab] = useState<'none' | 'how-it-works' | 'model-results'>('none');
@@ -100,19 +112,96 @@ export const App: React.FC = () => {
   // Load sample resume profile
   const handleLoadSample = (sampleKey: string) => {
     if (samples[sampleKey]) {
+      setUploadedFile(null);
       setResumeText(samples[sampleKey]);
       setValidationError(null);
       setSceneState('typing');
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  // Clear text
+  // Clear text and uploaded file
   const handleClear = () => {
+    setResumeText('');
+    setUploadedFile(null);
+    setPrediction(null);
+    setValidationError(null);
+    setSceneState('landing');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // Process uploaded resume file
+  const processFile = async (file: File) => {
+    const allowedExts = ['pdf', 'docx', 'doc', 'txt', 'md', 'rtf'];
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (!ext || !allowedExts.includes(ext)) {
+      setValidationError('Please upload a PDF (.pdf), Word document (.docx), or plain text (.txt).');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setValidationError('File size exceeds the 10MB limit. Please upload a smaller document.');
+      return;
+    }
+
+    setIsUploading(true);
+    setValidationError(null);
+
+    try {
+      const res = await uploadResumeFile(file);
+      setResumeText(res.text);
+      setUploadedFile({
+        name: res.filename,
+        size: file.size,
+        words: res.word_count,
+        type: res.file_type,
+      });
+      setSceneState('typing');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to extract text from document.';
+      setValidationError(message);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (!isDragging) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleRemoveUploadedFile = () => {
+    setUploadedFile(null);
     setResumeText('');
     setPrediction(null);
     setValidationError(null);
     setSceneState('landing');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
+
 
   // Execute Analysis
   const handleAnalyze = async () => {
@@ -227,22 +316,58 @@ export const App: React.FC = () => {
             Paste a resume below to see its best-fit role, match score, and key skills.
           </p>
 
-          <div className={styles.inputCard}>
-            {/* Quick Sample Selector */}
-            <div className={styles.sampleBar}>
-              <span className={styles.sampleLabel}>Try an example:</span>
-              {Object.keys(samples).map((sampleKey) => (
+          <div
+            className={`${styles.inputCard} ${isDragging ? styles.inputCardDragging : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {/* Hidden native file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              accept=".pdf,.docx,.doc,.txt,.md,.rtf"
+              onChange={handleFileInputChange}
+              disabled={isUploading || isAnalyzing}
+            />
+
+            {/* Upload Toolbar & Active File Status */}
+            <div className={styles.uploadRow}>
+              <div className={styles.uploadActions}>
                 <button
-                  key={sampleKey}
                   type="button"
-                  className={`${styles.sampleChip} ${
-                    samples[sampleKey] === resumeText ? styles.sampleChipActive : ''
-                  }`}
-                  onClick={() => handleLoadSample(sampleKey)}
+                  className={styles.uploadBtn}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading || isAnalyzing}
+                  title="Upload resume file (PDF, DOCX, TXT)"
                 >
-                  {sampleKey}
+                  <span className={styles.uploadIcon}>⬆</span>
+                  <span>{isUploading ? 'Extracting text...' : 'Upload Resume'}</span>
                 </button>
-              ))}
+
+                {uploadedFile ? (
+                  <div className={styles.fileBadge}>
+                    <span className={styles.fileBadgeName}>📄 {uploadedFile.name}</span>
+                    <span className={styles.fileBadgeMeta}>
+                      ({uploadedFile.words} words · {uploadedFile.type})
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.fileBadgeRemove}
+                      onClick={handleRemoveUploadedFile}
+                      title="Remove uploaded file"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <span className={styles.uploadHint}>
+                    PDF, DOCX, or TXT
+                  </span>
+                )}
+              </div>
+
               {resumeText && (
                 <button
                   type="button"
@@ -254,13 +379,38 @@ export const App: React.FC = () => {
               )}
             </div>
 
+            {/* Quick Sample Selector */}
+            <div className={styles.sampleBar}>
+              <span className={styles.sampleLabel}>Or try an example:</span>
+              {Object.keys(samples).map((sampleKey) => (
+                <button
+                  key={sampleKey}
+                  type="button"
+                  className={`${styles.sampleChip} ${
+                    !uploadedFile && samples[sampleKey] === resumeText ? styles.sampleChipActive : ''
+                  }`}
+                  onClick={() => handleLoadSample(sampleKey)}
+                  disabled={isUploading || isAnalyzing}
+                >
+                  {sampleKey}
+                </button>
+              ))}
+            </div>
+
+            {/* Drag-and-drop prompt banner when active */}
+            {isDragging && (
+              <div className={styles.dragOverlayPrompt}>
+                <span>⬆ Drop resume file to automatically extract text</span>
+              </div>
+            )}
+
             {/* Resume Input Textarea */}
             <textarea
               className={styles.resumeTextarea}
-              placeholder="Paste resume text here..."
+              placeholder="Paste resume text or upload a PDF / DOCX document above..."
               value={resumeText}
               onChange={handleTextChange}
-              disabled={isAnalyzing}
+              disabled={isAnalyzing || isUploading}
               spellCheck={false}
             />
 

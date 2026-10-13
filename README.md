@@ -14,8 +14,8 @@ An end-to-end Natural Language Processing (NLP) system that parses candidate res
 - 📄 **Full Technical Architecture**: [`PROJECT_EXPLAINED.md`](PROJECT_EXPLAINED.md)
 
 Features a modern **dual frontend**:
-1. **Interactive 3D Web Experience ("Word Constellation")**: High-performance React 19 + Three.js / React Three Fiber / GSAP frontend communicating with a FastAPI REST backend.
-2. **Cinematic Streamlit Dashboard**: A standalone single-process Python dashboard for rapid exploratory analysis.
+1. **Interactive 3D Web Experience ("Word Constellation")**: High-performance React 19 + Three.js / React Three Fiber / GSAP frontend with document upload support (`.pdf`, `.docx`, `.txt`, drag-and-drop) communicating with a FastAPI REST backend.
+2. **Cinematic Streamlit Dashboard**: A standalone single-process Python dashboard with document upload for rapid exploratory analysis.
 
 ---
 

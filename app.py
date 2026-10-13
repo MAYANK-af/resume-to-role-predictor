@@ -612,6 +612,23 @@ def main():
             if sample_cols2[1].button("🛡️ QA / Testing", use_container_width=True):
                 st.session_state.resume_text = SAMPLE_RESUMES["QA / Other Tech"]
 
+            # Document Upload Option
+            uploaded_file = st.file_uploader(
+                "Upload Resume File (.pdf, .docx, .txt):",
+                type=["pdf", "docx", "txt", "md"],
+                help="Extracts text directly from PDF or Word resume documents."
+            )
+            if uploaded_file is not None:
+                try:
+                    from server import extract_text_from_file
+                    file_bytes = uploaded_file.read()
+                    extracted_text = extract_text_from_file(uploaded_file.name, file_bytes)
+                    if extracted_text and extracted_text != st.session_state.resume_text:
+                        st.session_state.resume_text = extracted_text
+                        st.success(f"Loaded {len(extracted_text.split())} words from {uploaded_file.name}")
+                except Exception as ex:
+                    st.error(f"Error reading {uploaded_file.name}: {ex}")
+
             # Text Area
             input_text = st.text_area(
                 "Resume Text Content",
