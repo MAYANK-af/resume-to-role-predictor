@@ -10,7 +10,7 @@
 An end-to-end Natural Language Processing (NLP) system that parses candidate resumes, predicts the best-fit technical role, calculates a continuous **0–100 target role fit score**, and provides mathematical, keyword-level explainability for every recommendation.
 
 - 🌐 **Official Live 3D Web App**: [https://resume-to-role-predictor.onrender.com](https://resume-to-role-predictor.onrender.com)
-- 🔗 **GitHub Repository**: [https://github.com/MAYANK-af/resume-to-role-predictor](https://github.com/MAYANK-af/resume-to-role-predictor)
+
 - 📄 **Full Technical Architecture**: [`PROJECT_EXPLAINED.md`](PROJECT_EXPLAINED.md)
 
 Features a modern **dual frontend**:
